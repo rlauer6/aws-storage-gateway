@@ -163,7 +163,7 @@ resource "aws_vpc_endpoint" "vpce_storage_gateway" {
 
 # ec2 (storage gateway appliance)
 resource "aws_instance" "storage_gateway" {
-  ami = data.aws_ami.storage_gateway_ami_id.id
+  ami = var.ami_id != "" ? var.ami_id : data.aws_ami.storage_gateway_ami_id.id
   instance_type = var.instance_type
   subnet_id = var.private_subnet_id
   
@@ -252,6 +252,14 @@ data "aws_storagegateway_local_disk" "storage-gateway-data" {
 resource "aws_storagegateway_cache" "cache" {
   disk_id     = data.aws_storagegateway_local_disk.storage-gateway-data.id
   gateway_arn = aws_storagegateway_gateway.storage_gateway_example.arn
+}
+
+output "storage-gateway-ip" {
+  value = data.aws_instance.storage_gateway.private_ip
+}
+
+output "nfs_file_share" {
+  value = "mount -t nfs -o nolock,hard ${data.aws_instance.storage_gateway.private_ip}:/${aws_storagegateway_nfs_file_share.example.path}"
 }
 
 # storage gateway
@@ -347,6 +355,10 @@ resource "aws_storagegateway_nfs_file_share" "example" {
   location_arn = var.s3_bucket_arn
   role_arn     = aws_iam_role.storage_gateway_role.arn
   notification_policy = "{\"Upload\": {\"SettlingTimeInSeconds\": 60}}"
+}
+
+output "nfs_file_share_path" {
+  value = aws_storagegateway_nfs_file_share.example.path
 }
 
 # cloudwatch event

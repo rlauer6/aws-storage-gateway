@@ -46,3 +46,12 @@ module "storage-gateway" {
   ami_id                  = ""
 }
 ```
+
+# NFS Mount Command
+
+To get the command to mount your NFS share...
+
+```
+terraform output
+nfs_file_share = mount -t nfs -o nolock,hard 10.1.4.128://some-bucket
+```
