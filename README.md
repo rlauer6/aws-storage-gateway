@@ -40,7 +40,7 @@ module "storage-gateway" {
   gateway_name            = "example"
   timezone                = "GMT-4:00"
   
-  # use defaults..
+  # use defaults...
   role_name               = ""
   policy_name             = ""
   ami_id                  = ""
@@ -52,6 +52,15 @@ module "storage-gateway" {
 To get the command to mount your NFS share...
 
 ```
-terraform output
+terraform output nfs_file_share
 nfs_file_share = mount -t nfs -o nolock,hard 10.1.4.128://some-bucket
 ```
+
+# Storage Gateway IP
+
+To get the IP address of the Storage Gateway...
+```
+terraform output storage-gateway-ip
+storage-gateway-ip = 10.1.4.128
+```
+

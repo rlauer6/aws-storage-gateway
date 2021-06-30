@@ -361,6 +361,8 @@ output "nfs_file_share_path" {
   value = aws_storagegateway_nfs_file_share.example.path
 }
 
+
+
 # cloudwatch event
 resource "aws_cloudwatch_event_rule" "storage_gateway_cwe" {
   name = "storage-gateway"
