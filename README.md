@@ -18,8 +18,8 @@ Terraform module to create an S3 File Gateway
 
 * Creates an NFS share that can be written to in specified subnet only
 
-* YOUR TBD: Create subscriptions to topic if you want to do something on
-  an object upload
+* YOUR TBD: Create a Lambda that you can subscribe to the storage
+  gateway topic
 
 
 # Example Usage:
@@ -44,6 +44,7 @@ module "storage-gateway" {
   role_name               = ""
   policy_name             = ""
   ami_id                  = ""
+  lambda_function_name    = ""
 }
 ```
 

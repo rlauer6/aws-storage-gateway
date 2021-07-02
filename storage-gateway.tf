@@ -84,6 +84,7 @@ data "aws_ami" "storage_gateway_ami_id" {
 # ami_id:
 variable "ami_id"                  { }
 
+variable "lambda_function_name"    { }
 
 # +-------------------+
 # | RESOURCES CREATED |
@@ -279,7 +280,6 @@ resource "aws_storagegateway_gateway" "storage_gateway_example" {
 # iam policy
 resource "aws_iam_policy" "policy_for_sg_s3_access" {
   name = var.policy_name != "" ? var.policy_name : ""
-  # "AllowStorageGatewayAssumeBucketAccessRole16246294646260.2742595540183297"
   
   policy = jsonencode(
 {
@@ -321,7 +321,6 @@ resource "aws_iam_policy" "policy_for_sg_s3_access" {
 resource "aws_iam_role" "storage_gateway_role" {
   
   name = var.role_name != "" ? var.role_name : ""
-  # "StorageGatewayBucketAccessRole16246294646260.5299790342267423"
   path = "/service-role/"
   assume_role_policy = jsonencode(
 {
@@ -405,4 +404,16 @@ data "aws_iam_policy_document" "sns_topic_policy" {
 
     resources = [aws_sns_topic.storage_gateway_topic.arn]
   }
+}
+
+data "aws_lambda_function" "storage-gateway-lambda" {
+  count = var.lambda_function_name != "" ? 1 : 0
+  function_name = var.lambda_function_name
+}
+
+resource "aws_sns_topic_subscription" "storage-gateway-sns-topic" {
+  count = var.lambda_function_name != "" ? 1 : 0
+  topic_arn = aws_sns_topic_policy.default.arn
+  protocol = "lambda"
+  endpoint = data.aws_lambda_function.storage-gateway-lambda[0].arn
 }
